@@ -1,0 +1,32 @@
+syntax = "proto3";
+package demo;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+
+// Demonstrates: map, oneof, Any, Duration, well-known types.
+
+message Config {
+  map<string, string>      labels      = 1;  // key/value metadata
+
+  oneof backend {                            // exactly one of these is set
+    string tcp_host     = 2;
+    string socket_path  = 3;
+  }
+
+  google.protobuf.Duration timeout     = 4;
+  int32                    max_conns   = 5;
+}
+
+// Payload can be any registered message type.
+message Event {
+  string               type    = 1;
+  int64                time_ns = 2;
+  google.protobuf.Any  payload = 3;
+}
+
+// Reuse person.proto's Person via the Any payload above.
+message MetricValue {
+  string name  = 1;
+  double value = 2;
+}

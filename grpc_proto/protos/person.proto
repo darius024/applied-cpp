@@ -1,0 +1,32 @@
+syntax = "proto3";
+package demo;
+
+import "google/protobuf/timestamp.proto";
+
+enum Role {
+  ROLE_UNKNOWN  = 0;
+  ROLE_ENGINEER = 1;
+  ROLE_MANAGER  = 2;
+}
+
+message Address {
+  string street  = 1;
+  string city    = 2;
+  string country = 3;
+}
+
+message Person {
+  uint32                    id         = 1;
+  string                    name       = 2;
+  int32                     age        = 3;
+  repeated string           tags       = 4;  // dynamic list
+  Role                      role       = 5;
+  Address                   address    = 6;  // has_address() available
+  optional string           email      = 7;  // has_email() available
+  google.protobuf.Timestamp created_at = 8;
+}
+
+message Team {
+  string          name    = 1;
+  repeated Person members = 2;
+}
