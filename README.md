@@ -46,6 +46,25 @@ numbered examples focused on high-performance systems use cases.
 | `abseil/` | Google Abseil | flat_hash_map, btree containers, InlinedVector, Span, Status/StatusOr, string utils, Time/Duration, Mutex+annotations, Notification/Barrier/BlockingCounter, FunctionRef/AnyInvocable |
 | `serialisation/` | FlatBuffers & Cap'n Proto | FlexBuffers (schemaless), schema-based FlatBuffers, Cap'n Proto zero-copy wire format |
 
+### `grpc_proto`
+Protocol Buffers and gRPC for high-performance RPC. CMake-based build with generated
+stubs. Covers proto3 syntax, arena allocation, all four RPC streaming types (unary,
+server-stream, client-stream, bidi), async CQ server, interceptors, deadlines, and cancellation.
+
+| File | Topic |
+|------|-------|
+| `protos/` | `person.proto`, `advanced.proto`, `metrics.proto` |
+| `01_proto_basics.cpp` | Accessors, nested messages, repeated fields, serialisation |
+| `02_proto_advanced.cpp` | Maps, oneof, Any, Duration, Reflection API |
+| `03_proto_arena.cpp` | Arena allocation — bump allocator, Reset, ArenaOptions |
+| `04_grpc_unary.cpp` | Sync unary RPC — ServerBuilder, stub, Status |
+| `05_grpc_server_stream.cpp` | Server-side streaming — ServerWriter, ClientReader |
+| `06_grpc_client_stream.cpp` | Client-side streaming — ClientWriter, WritesDone, Finish |
+| `07_grpc_bidi_stream.cpp` | Bidirectional streaming — ServerReaderWriter, split-thread client |
+| `08_grpc_async.cpp` | Async server — CompletionQueue, CallData state machine |
+| `09_grpc_interceptors.cpp` | Server + client interceptors — logging, auth token injection |
+| `10_grpc_deadline_cancel.cpp` | Deadlines, DEADLINE_EXCEEDED, TryCancel, IsCancelled |
+
 ---
 
 ## Setup
