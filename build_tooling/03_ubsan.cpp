@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <initializer_list>
 
 // ─────────────────────────────────────────────────────────────────────
 // UndefinedBehaviorSanitizer (UBSan).
@@ -198,12 +199,11 @@ static void demo_div_zero()
     int numerator = 100;
     volatile int denominator = 0; // volatile prevents compile-time elim
 
-    if (denominator == 0) {
-        std::puts("  denominator is 0 — skip division (safe path)");
-        return;
-    }
-    int result = numerator / denominator; // UBSan fires if we get here
-    (void)result;
+    // Without UBSan: typically raises SIGFPE on x86.
+    // With    UBSan: runtime error reported, then continues or aborts.
+    int result = numerator / denominator; // UBSan: division by zero
+    std::printf("  100 / 0 = %d  (UB — UBSan flags this)\n", result);
+    std::puts("  Fix: guard with `if (denominator == 0) return;` before dividing");
 }
 
 // ── Bug 7: VLA / array out-of-bounds ──────────────────────────────────

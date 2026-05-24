@@ -6,8 +6,9 @@
 // ─────────────────────────────────────────────────────────────────────
 // Sorting algorithms.
 //
-// sort          — O(N log N) average, not stable (equal elements may reorder).
-// stable_sort   — O(N log² N), preserves relative order of equal elements.
+// sort          — O(N log N) worst case (since C++11), not stable.
+// stable_sort   — O(N log N) if extra memory is available,
+//                 O(N log² N) otherwise; preserves order of equal elements.
 // partial_sort  — O(N log M): only the first M positions are sorted correctly.
 // nth_element   — O(N) average: element at position n is the one that would
 //                 be there in a sorted range; rest are unordered.

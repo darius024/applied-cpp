@@ -1,5 +1,7 @@
 #include <iostream>
 #include <functional>
+#include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -55,7 +57,8 @@ public:
     {
         auto& vec = handlers_[event];
         vec.erase(std::remove_if(vec.begin(), vec.end(),
-                  [id](const Entry& e){ return e.id == id; }), vec.end());
+                  [id](const auto& entry){ return entry.first == id; }),
+                  vec.end());
     }
 
     // Fire all handlers for this event.
@@ -67,14 +70,8 @@ public:
     }
 
 private:
-    struct Entry { int id; Handler handler; };
-    // allow structured binding on Entry:
     std::map<std::string, std::vector<std::pair<int, Handler>>> handlers_;
     int next_id_ = 0;
-
-    // Simpler internal storage:
-    std::unordered_map<std::string,
-        std::vector<std::pair<int, Handler>>> h2_;
 };
 
 // ── Simpler EventEmitter (cleaner internal layout) ────────────────────

@@ -29,8 +29,10 @@ concept Printable = requires(T t) {
     { std::cout << t } -> std::same_as<std::ostream&>; // must be streamable
 };
 
+// Defined in terms of standard concepts so subsumption works:
+// `std::integral<T>` properly refines `Numeric<T>` in overload resolution.
 template<typename T>
-concept Numeric = std::is_arithmetic_v<T>;
+concept Numeric = std::integral<T> || std::floating_point<T>;
 
 // A more complex concept: a type that supports +, -, * and has a default ctor.
 template<typename T>

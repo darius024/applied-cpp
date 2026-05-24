@@ -18,12 +18,13 @@
 // ── Template template parameter ───────────────────────────────────────
 //
 // The Container policy itself is a template (it needs to be instantiated
-// with T). We declare it as `template<typename> class Container` so the
-// compiler knows it's a one-argument template, not a type.
+// with T). We declare it with a variadic template parameter list so any
+// standard container (vector, deque, ...) works — they take T plus a
+// hidden Allocator parameter.
 
 template<
     typename T,
-    template<typename> class Container = std::vector  // default: vector
+    template<typename...> class Container = std::vector  // default: vector
 >
 class Stack
 {

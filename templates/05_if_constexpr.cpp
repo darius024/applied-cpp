@@ -42,8 +42,12 @@ std::string describe(T)
 template<typename T>
 void print_info(const T& v)
 {
-    std::cout << "value: " << v;
-    if constexpr (requires { v.size(); })   // ad-hoc requires (C++20 expr)
+    std::cout << "value: ";
+    if constexpr (requires { std::cout << v; })   // ad-hoc requires (C++20)
+        std::cout << v;
+    else
+        std::cout << "<not streamable>";
+    if constexpr (requires { v.size(); })
         std::cout << " size=" << v.size();
     std::cout << "\n";
 }

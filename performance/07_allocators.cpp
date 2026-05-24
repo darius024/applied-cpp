@@ -112,7 +112,7 @@ static void demo_monotonic()
 
         std::printf("  vector of %zu prices (all from stack buffer)\n",
                     prices.size());
-        std::printf("  pool used before reset: %zu bytes\n", pool.options().largest_required_pool_block);
+        std::printf("  buffer capacity: %zu bytes\n", stack_buf.size());
     }
     // No heap allocation happened; pool.release() would reset.
     std::puts("  no malloc called — O(1) bump-pointer allocations");

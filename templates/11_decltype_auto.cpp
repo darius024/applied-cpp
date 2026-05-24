@@ -100,7 +100,8 @@ int main()
     std::cout << add(std::string("hello "), std::string("world")) << "\n";
 
     std::vector<int> v = {10, 20, 30};
-    front(v) = 99;                          // copy — modifying copy, not original
+    auto copy = front(v);                   // copy — modifying copy, not original
+    copy = 99;
     front_ref(v) = 99;                      // ref  — modifies v[0]
     std::cout << "v[0] after front_ref = " << v[0] << "\n"; // 99
 

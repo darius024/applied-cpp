@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 // ─────────────────────────────────────────────────────────────────────
@@ -141,7 +142,6 @@ static void demo_uninit_struct()
 //   use-of-uninitialized-value
 //   from alloc in demo_malloc_uninit
 //
-#include <cstdlib>
 static void demo_malloc_uninit()
 {
     section("malloc vs calloc vs explicit init");
@@ -154,15 +154,16 @@ static void demo_malloc_uninit()
     double* buf_good = static_cast<double*>(std::calloc(8, sizeof(double)));
     if (!buf_good) { std::free(buf_bad); return; }
 
-    // MSan unpoison: use when external (uninstrumented) code initialises.
-    MSAN_UNPOISON(buf_bad, 8 * sizeof(double));
-
 #ifdef TRIGGER_MALLOC_UNINIT
-    // Without the unpoison above, this would fire:
+    // Read straight from malloc'd memory — MSan fires here.
     std::printf("  buf_bad[0] = %.1f  (uninitialised — MSan fires)\n",
                 buf_bad[0]);
 #else
-    // Write before read — always correct:
+    // MSan unpoison: use when external (uninstrumented) code wrote to the
+    // buffer (e.g., read(2) into it) and MSan couldn't observe the write.
+    // Here we follow it with explicit writes so the buffer is initialised
+    // either way.
+    MSAN_UNPOISON(buf_bad, 8 * sizeof(double));
     for (int i = 0; i < 8; ++i) buf_bad[i] = 100.0 + i;
     std::printf("  buf_bad[0]  = %.1f (written before read — safe)\n",  buf_bad[0]);
     std::printf("  buf_good[0] = %.1f (calloc zero-init — safe)\n",     buf_good[0]);

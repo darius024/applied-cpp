@@ -38,18 +38,8 @@
                 #T, sizeof(T), alignof(T))
 
 // ── PART 1: padding created by member ordering ─────────────────────────
-// Members are laid out in declaration order.  The compiler inserts
+// Members are laid out in declaration order. The compiler inserts
 // padding before each member so it is naturally aligned.
-
-struct BadOrder {
-    char   a;       // 1 byte  → 1 byte used
-    // 7 bytes padding
-    double b;       // 8 bytes aligned to 8
-    char   c;       // 1 byte
-    // 7 bytes trailing padding (so array stride is multiple of 8)
-    int    d;       // wait — order matters; let's trace exactly:
-};
-// Actual layout of BadOrder: a(1)+pad(3)+d... let me spell it out:
 
 struct PaddedBad {
     char   a;    // offset 0,  size 1
@@ -118,8 +108,13 @@ static_assert(sizeof(PriceBuffer) == 32, "size wrong");
 // ── PART 4: std::hardware_destructive_interference_size (C++17) ────────
 // The standard way to get the cache-line size portably.
 // Equivalent to 64 on x86 / Apple Silicon.
+// libc++ on macOS doesn't expose it by default — fall back to 64.
+#ifdef __cpp_lib_hardware_interference_size
 static constexpr std::size_t CACHE_LINE =
     std::hardware_destructive_interference_size;
+#else
+static constexpr std::size_t CACHE_LINE = 64;
+#endif
 
 template <typename T>
 struct CacheAligned {
@@ -136,15 +131,15 @@ struct CacheAligned {
 // Use ONLY for serialisation (network/disk) buffers that you then copy.
 
 struct [[gnu::packed]] WireQuote {
-    std::uint32_t seq;
-    std::uint16_t venue_id;
-    double        bid_px;
-    double        ask_px;
-    std::uint32_t bid_sz;
-    std::uint32_t ask_sz;
-};
-static_assert(sizeof(WireQuote) == 26,
-              "wire format must be exactly 26 bytes");
+    std::uint32_t seq;      //  4 bytes
+    std::uint16_t venue_id; //  2 bytes
+    double        bid_px;   //  8 bytes
+    double        ask_px;   //  8 bytes
+    std::uint32_t bid_sz;   //  4 bytes
+    std::uint32_t ask_sz;   //  4 bytes
+};                          // total: 30 bytes (no padding)
+static_assert(sizeof(WireQuote) == 30,
+              "wire format must be exactly 30 bytes");
 
 int main()
 {
